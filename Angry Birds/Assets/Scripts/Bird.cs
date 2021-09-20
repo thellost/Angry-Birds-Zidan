@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Bird : MonoBehaviour
 {
+
+    public UnityAction OnBirdDestroyed = delegate { };
     public enum BirdState { Idle, Thrown }
     public GameObject Parent;
     public Rigidbody2D RigidBody;
@@ -58,5 +61,10 @@ public class Bird : MonoBehaviour
         RigidBody.bodyType = RigidbodyType2D.Dynamic;
         RigidBody.velocity = velocity * speed * distance;
 
+    }
+
+    void OnDestroy()
+    {
+        OnBirdDestroyed();
     }
 }
