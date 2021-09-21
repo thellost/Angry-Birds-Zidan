@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -8,6 +10,9 @@ public class GameController : MonoBehaviour
     public TrailController TrailController;
     public List<Bird> Birds;
     public List<Enemy> Enemies;
+    public Button nextButton;
+    public GameObject GameOverPanel;
+
     private Bird _shotBird;
 
     public BoxCollider2D TapCollider;
@@ -15,6 +20,7 @@ public class GameController : MonoBehaviour
     private bool _isGameEnded = false;
     void Start()
     {
+        nextButton.interactable = false;
         for (int i = 0; i < Birds.Count; i++)
         {
             //object game controller akan meng "subscribe" fungsi onbirddestroyed , dan menjalankan fungsi Change bird
@@ -31,6 +37,7 @@ public class GameController : MonoBehaviour
         SlingShooter.InitiateBird(Birds[0]);
         _shotBird = Birds[0];
     }
+
     public void ChangeBird()
     {
         _shotBird = null;
@@ -48,6 +55,14 @@ public class GameController : MonoBehaviour
         {
             SlingShooter.InitiateBird(Birds[0]);
             _shotBird = Birds[0];
+            return;
+        }
+        if (Enemies.Count > 0 && Birds.Count <= 0 && !_isGameEnded)
+        {
+            GameOverPanel.SetActive(true);
+
+            _isGameEnded = true;
+            return;
         }
     }
 
@@ -61,10 +76,17 @@ public class GameController : MonoBehaviour
                 break;
             }
         }
+        if(Enemies.Count > 0 && Birds.Count <= 0)
+        {
+            GameOverPanel.SetActive(true);
 
+            _isGameEnded = true;
+            return;
+        }
         if (Enemies.Count == 0)
         {
             _isGameEnded = true;
+            nextButton.interactable = true;
         }
     }
     public void AssignTrail(Bird bird)
@@ -80,4 +102,10 @@ public class GameController : MonoBehaviour
             _shotBird.OnTap();
         }
     }
+
+    public void LoadNextLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
+    }
+
 }
